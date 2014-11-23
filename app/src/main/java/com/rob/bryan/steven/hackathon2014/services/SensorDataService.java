@@ -359,8 +359,10 @@ public class SensorDataService extends IntentService {
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
                         Log.d("Sensed", "Light:" + reading.light + "\nProx: " + reading.prox);
-                        if (AlarmManager.checkLight(reading.light, SensorDataService.this)
-                                || AlarmManager.checkWindowOpen(reading.prox, SensorDataService.this)) {
+                        if (AlarmManager.checkLight(reading.light, SensorDataService.this)){
+                            showNotification();
+                        }
+                        if(AlarmManager.checkWindowOpen(reading.prox, SensorDataService.this)){
                             showNotification();
                         }
                     }

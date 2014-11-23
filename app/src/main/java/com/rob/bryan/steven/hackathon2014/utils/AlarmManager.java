@@ -32,10 +32,10 @@ public class AlarmManager {
         Alert alert;
         if(temp < 3){
             //Fridge cool mode is set to high
-            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "The fridge is too cold. (" + (int)temp + "˚C\")", Alert.MEDIUM_PRIORITY);
+            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "The fridge is too cold. (" + (int)temp + "˚C)", Alert.MEDIUM_PRIORITY);
         }else if(temp > 31){ //TODO: Change to 11, this is just for the demo
             //Fridge it too warm (open/defect?)
-            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "The fridge is too warm. (" + (int)temp + "˚C\"", Alert.HIGH_PRIORITY);
+            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "The fridge is too warm. (" + (int)temp + "˚C)", Alert.HIGH_PRIORITY);
         }else{
             //No Problem
             return false;
