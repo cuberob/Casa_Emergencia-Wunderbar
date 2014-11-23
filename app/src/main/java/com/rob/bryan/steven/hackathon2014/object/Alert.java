@@ -116,16 +116,16 @@ public class Alert {
     }
 
     public static AlertType getAlertTypeFromString(String str){
-        if(str.equals("Temp")){
+        if(str.equals("Temperature")){
             return AlertType.TEMPERATURE;
         }
-        if(str.equals("Move")){
+        if(str.equals("Movement")){
             return AlertType.MOVEMENT;
         }
         if(str.equals("Sound")){
             return AlertType.SOUND;
         }
-        if(str.equals("Prox")){
+        if(str.equals("Proximity")){
             return AlertType.PROXIMITY;
         }
         if(str.equals("Light")){

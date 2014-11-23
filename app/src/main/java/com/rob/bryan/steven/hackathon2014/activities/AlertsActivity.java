@@ -19,6 +19,11 @@ import android.widget.TextView;
 import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
 import com.rob.bryan.steven.hackathon2014.services.SensorDataService;
+import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -48,11 +53,21 @@ public class AlertsActivity extends BaseActivity {
 
         ArrayList<Alert> alerts = new ArrayList<Alert>();
 
-        alerts.add(new Alert("Light", Alert.AlertType.LIGHT, "Main light broken", 0));
-        alerts.add(new Alert("Refrigerator", Alert.AlertType.TEMPERATURE, "Too cold", 0));
-        alerts.add(new Alert("Room", Alert.AlertType.TEMPERATURE, "Too cold", 0));
-        alerts.add(new Alert("Window", Alert.AlertType.PROXIMITY, "Is open", 0));
-        alerts.add(new Alert("Sound", Alert.AlertType.SOUND, "Too noisy", 0));
+//        alerts.add(new Alert("Light", Alert.AlertType.LIGHT, "Main light broken", 0));
+//        alerts.add(new Alert("Refrigerator", Alert.AlertType.TEMPERATURE, "Too cold", 0));
+//        alerts.add(new Alert("Room", Alert.AlertType.TEMPERATURE, "Too cold", 0));
+//        alerts.add(new Alert("Window", Alert.AlertType.PROXIMITY, "Is open", 0));
+//        alerts.add(new Alert("Sound", Alert.AlertType.SOUND, "Too noisy", 0));
+
+        JSONArray alertsArray = AlarmManager.getAlertsJSONArray(getApplicationContext());
+
+        for (int i = 0; i < alertsArray.length(); i++) {
+            try {
+                alerts.add(new Alert((JSONObject) alertsArray.get(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         mAdapter = new AlertsAdapter(alerts);
         mRecyclerView.setAdapter(mAdapter);
