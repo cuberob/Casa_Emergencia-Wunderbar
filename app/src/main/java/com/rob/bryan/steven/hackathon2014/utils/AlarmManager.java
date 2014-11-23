@@ -90,6 +90,15 @@ public class AlarmManager {
         updateSettings(context, mAlertsJSONArray);
     }
 
+    /**
+     * Deletes the alert from the sharedPrefs
+     * @param type
+     * @param context
+     */
+    public static void markAsDone(Alert.AlertType type, Context context){
+
+    }
+
     public static JSONArray getAlertsJSONArray(Context context){
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
