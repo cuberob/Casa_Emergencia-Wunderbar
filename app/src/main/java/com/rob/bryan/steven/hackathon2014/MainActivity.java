@@ -5,13 +5,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.rob.bryan.steven.hackathon2014.activities.BaseActivity;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setActionBarIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+    }
+
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.activity_main;
     }
 
 
