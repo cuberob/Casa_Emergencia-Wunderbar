@@ -97,7 +97,9 @@ public class AlertsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == loginResultCode){
+        if(resultCode == requestCode){
+            mLogOut.setVisible(true);
+            mLogIn.setVisible(false);
             login();
         }
     }
@@ -110,7 +112,7 @@ public class AlertsActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_login, menu);
 
         mLogIn = menu.findItem(R.id.action_log_in);
         mLogOut = menu.findItem(R.id.action_log_out);
