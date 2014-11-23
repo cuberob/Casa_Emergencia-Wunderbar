@@ -7,10 +7,10 @@
     android:layout_marginBottom="10dp">
 
     <View
+        android:id="@+id/label"
         android:layout_width="20dp"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
-        android:background="@color/red_600" />
+        android:layout_gravity="left" />
 
     <TextView
         android:id="@+id/alert_type"

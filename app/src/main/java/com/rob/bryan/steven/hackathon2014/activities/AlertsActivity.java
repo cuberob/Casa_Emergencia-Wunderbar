@@ -55,12 +55,6 @@ public class AlertsActivity extends BaseActivity {
 
         alerts = new ArrayList<Alert>();
 
-//        alerts.add(new Alert("Light", Alert.AlertType.LIGHT, "Main light broken", 0));
-//        alerts.add(new Alert("Refrigerator", Alert.AlertType.TEMPERATURE, "Too cold", 0));
-//        alerts.add(new Alert("Room", Alert.AlertType.TEMPERATURE, "Too cold", 0));
-//        alerts.add(new Alert("Window", Alert.AlertType.PROXIMITY, "Is open", 0));
-//        alerts.add(new Alert("Sound", Alert.AlertType.SOUND, "Too noisy", 0));
-
         JSONArray alertsArray = AlarmManager.getAlertsJSONArray(getApplicationContext());
 
         mAdapter = new AlertsAdapter();
@@ -103,6 +97,9 @@ public class AlertsActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
             final Alert alert = alerts.get(position);
+
+            View label = holder.card.findViewById(R.id.label);
+            label.setBackgroundResource(alert.getPriorityColor());
 
             TextView title = (TextView) holder.card.findViewById(R.id.alert_name);
             title.setText(alert.getName());
@@ -164,21 +161,21 @@ public class AlertsActivity extends BaseActivity {
     public void onEvent(Alert alert) {
         Log.d("AlertsActivity", "boolean: " + alert.getDescription());
 
-        int existingPosition = -1;
+        Alert existingAlert = null;
 
         for (int i = 0; i < mAdapter.getItemCount(); i++) {
             if (alerts.get(i).getAlertType() == alert.getAlertType()) {
-                existingPosition = i;
+                existingAlert = alerts.get(i);
             }
         }
 
-        if (existingPosition > -1) {
-            alerts.remove(existingPosition);
-            alerts.add(existingPosition, alert);
-            mAdapter.notifyItemChanged(existingPosition);
+        if (existingAlert != null) {
+            alerts.set(alerts.indexOf(existingAlert), alert);
+            mAdapter.notifyItemChanged(alerts.indexOf(alert));
             Log.d("Alerts", "Existed, replaced");
         } else {
             alerts.add(alert);
+            mAdapter.notifyItemInserted(alerts.indexOf(alert));
             Log.d("Alerts", "New, added");
 
             AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
@@ -193,8 +190,6 @@ public class AlertsActivity extends BaseActivity {
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mEmptyList.setVisibility(View.INVISIBLE);
-                    int position = mAdapter.getItemCount();
-                    mAdapter.notifyItemInserted(position - 1);
                 }
 
                 @Override
@@ -204,7 +199,10 @@ public class AlertsActivity extends BaseActivity {
             });
 
             mRecyclerView.setVisibility(View.VISIBLE);
-            mEmptyList.startAnimation(fadeOut);
+
+            if (mEmptyList.getVisibility() == View.VISIBLE) {
+                mEmptyList.startAnimation(fadeOut);
+            }
         }
     }
 
