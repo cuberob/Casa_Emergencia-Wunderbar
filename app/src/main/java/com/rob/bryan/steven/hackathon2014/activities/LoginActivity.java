@@ -35,6 +35,7 @@ public class LoginActivity extends BaseActivity implements LoginEventListener {
     @Override
     public void onSuccessUserLogIn() {
         Toast.makeText(this, R.string.successfully_logged_in, Toast.LENGTH_SHORT).show();
+        setResult(RESULT_OK);
         finish();
     }
 

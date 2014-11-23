@@ -77,7 +77,7 @@ public class AlarmManager {
 
     public static boolean checkWindowOpen(float distance, Context context){
         Alert alert;
-        if(distance < 95){
+        if(distance < 1900){
             alert = new Alert("Window", Alert.AlertType.PROXIMITY, "The windows is still open", Alert.HIGH_PRIORITY);
         }else{
             return false;
