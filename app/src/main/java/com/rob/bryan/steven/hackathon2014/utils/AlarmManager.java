@@ -32,10 +32,10 @@ public class AlarmManager {
         Alert alert;
         if(temp < 3){
             //Fridge cool mode is set to high
-            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too cold. Temp: " + temp, Alert.MEDIUM_PRIORITY);
+            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "The fridge is too cold. (" + (int)temp + "˚C\")", Alert.MEDIUM_PRIORITY);
         }else if(temp > 31){ //TODO: Change to 11, this is just for the demo
             //Fridge it too warm (open/defect?)
-            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too warm. Temp: " + temp, Alert.HIGH_PRIORITY);
+            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "The fridge is too warm. (" + (int)temp + "˚C\"", Alert.HIGH_PRIORITY);
         }else{
             //No Problem
             return false;
@@ -55,11 +55,11 @@ public class AlarmManager {
     public static boolean checkNoiseLevel(float level, Context context){
         Alert alert;
         if(level > 768){
-            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is very loud. Level: " + level, Alert.HIGH_PRIORITY);
+            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is very loud.", Alert.HIGH_PRIORITY);
         }else if(level > 512){
-            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is noisy. Level: " + level, Alert.MEDIUM_PRIORITY);
+            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is noisy.", Alert.MEDIUM_PRIORITY);
         }else if(level > 256){
-            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is mildly noisy. Level: " + level, Alert.LOW_PRIORITY);
+            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is mildly noisy.", Alert.LOW_PRIORITY);
         }else{
             return false;
         }
@@ -78,7 +78,7 @@ public class AlarmManager {
     public static boolean checkWindowOpen(float distance, Context context){
         Alert alert;
         if(distance < 1900){
-            alert = new Alert("Window", Alert.AlertType.PROXIMITY, "The windows is still open. Prox: " + distance, Alert.LOW_PRIORITY);
+            alert = new Alert("Window", Alert.AlertType.PROXIMITY, "The window is open.", Alert.LOW_PRIORITY);
         }else{
             return false;
         }
@@ -96,11 +96,8 @@ public class AlarmManager {
 
     public static boolean checkLight(float level, Context context){
         Alert alert;
-        if(!timeInBetween("01:00:00", "22:00:00", System.currentTimeMillis())){ //TODO: Set to 22:00 for demo, change to 6:00 for actual use
-            return false;
-        }
         if(level > 100){
-            alert = new Alert("Light", Alert.AlertType.LIGHT, "The room light seems to be on. Light: " + level, Alert.LOW_PRIORITY);
+            alert = new Alert("Light", Alert.AlertType.LIGHT, "The light is turned on.", Alert.LOW_PRIORITY);
         }else{
             return false;
         }
@@ -167,42 +164,6 @@ public class AlarmManager {
         //Save the new AlertsArray to sharedPrefs
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPrefs.edit().putString(ALERTS_SP_KEY, array.toString()).commit();
-    }
-
-    /**
-     *
-     * @param endTime HH:MM:SS
-     * @param startTime   HH:MM:SS
-     * @param currentTime
-     * @return
-     */
-    private static boolean timeInBetween(String endTime, String startTime, long currentTime){
-        try {
-            Date time1 = new SimpleDateFormat("HH:mm:ss").parse(endTime);
-            Calendar calendar1 = Calendar.getInstance();
-            calendar1.setTime(time1);
-
-            Date time2 = new SimpleDateFormat("HH:mm:ss").parse(startTime);
-            Calendar calendar2 = Calendar.getInstance();
-            calendar2.setTime(time2);
-            calendar2.add(Calendar.DATE, 1);
-
-            String someRandomTime = "01:00:00";
-            Date d = new SimpleDateFormat("HH:mm:ss").parse(someRandomTime);
-            Calendar calendar3 = Calendar.getInstance();
-            calendar3.setTimeInMillis(currentTime);
-            calendar3.add(Calendar.DATE, 1);
-
-            Date x = calendar3.getTime();
-            if (x.after(calendar1.getTime()) && x.before(calendar2.getTime())) {
-                //checks whether the current time is between 14:49:00 and 20:11:13.
-                return true;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return false;
     }
 
     public static ArrayList<Alert> getAlertsList(Context context){
