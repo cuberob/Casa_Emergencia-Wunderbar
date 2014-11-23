@@ -116,7 +116,7 @@ public class AlarmManager {
 
     public static boolean checkIfGettingLaid(AccelGyroscope.Accelerometer accelerometer, Context context){
         Alert alert;
-        if(accelerometer.x > 0.1 && accelerometer.y > 0.1){
+        if(accelerometer.x > 0.1 || accelerometer.y > 0.1){
             alert = new Alert("F$#&!", Alert.AlertType.MOVEMENT, "Someone is getting laid...", Alert.XXX_PRIORITY);
         }else{
             return false;

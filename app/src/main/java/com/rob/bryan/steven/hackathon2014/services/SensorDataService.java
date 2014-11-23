@@ -116,6 +116,7 @@ public class SensorDataService extends IntentService {
         setupTemperatureSubscription();
         setupProximitySubscription();
         setupSoundSubscription();
+        setupAccelerationSubscription();
     }
 
     /**
@@ -397,7 +398,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d("Sensed", "Temp: " + reading.temp + "˚C");
+                        //Log.d("Sensed", "Temp: " + reading.temp + "˚C");
                         if (AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this)) {
                             showNotification(false);
                         }
@@ -423,7 +424,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d("Sensed", "Light:" + reading.light + "\nProx: " + reading.prox);
+                        //Log.d("Sensed", "Light:" + reading.light + "\nProx: " + reading.prox);
                         if (AlarmManager.checkLight(reading.light, SensorDataService.this)){
                             showNotification(false);
                         }
@@ -452,7 +453,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d("Sensed", "Sound: " + reading.snd_level);
+                        //Log.d("Sensed", "Sound: " + reading.snd_level);
                         if (AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this)) {
                             showNotification(false);
                         }
@@ -478,7 +479,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d("Sensed", "Sound: " + reading.accel);
+                        //Log.d("Sensed", "Accel X + Y: " + reading.accel.x + " " + reading.accel.y);
                         if (AlarmManager.checkIfGettingLaid(reading.accel, SensorDataService.this)) {
                             showNotification(false);
                         }
