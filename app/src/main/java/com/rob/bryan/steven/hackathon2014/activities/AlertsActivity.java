@@ -37,19 +37,12 @@ public class AlertsActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         ArrayList<Alert> alerts = new ArrayList<Alert>();
-<<<<<<< HEAD
-        alerts.add(new Alert("Light", Alert.AlertType.LIGHT, "Main light broken"));
-        alerts.add(new Alert("Refrigerator", Alert.AlertType.TEMPERATURE, "Too cold"));
-        alerts.add(new Alert("Room", Alert.AlertType.TEMPERATURE, "Too cold"));
-        alerts.add(new Alert("Window", Alert.AlertType.PROXIMITY, "Is open"));
-        alerts.add(new Alert("Sound", Alert.AlertType.SOUND, "Too noisy"));
-=======
-        alerts.add(new Alert("Light is defect", Alert.AlertType.LIGHT, 0));
-        alerts.add(new Alert("Refrigerator is too warm", Alert.AlertType.TEMPERATURE, 0));
-        alerts.add(new Alert("Room is too cold", Alert.AlertType.TEMPERATURE, 0));
-        alerts.add(new Alert("Window is open", Alert.AlertType.PROXIMITY, 0));
-        alerts.add(new Alert("Sound level is too noisy", Alert.AlertType.SOUND, 0));
->>>>>>> f1fab5c965362676cc20223774482b359277d6ee
+
+        alerts.add(new Alert("Light", Alert.AlertType.LIGHT, "Main light broken", 0));
+        alerts.add(new Alert("Refrigerator", Alert.AlertType.TEMPERATURE, "Too cold", 0));
+        alerts.add(new Alert("Room", Alert.AlertType.TEMPERATURE, "Too cold", 0));
+        alerts.add(new Alert("Window", Alert.AlertType.PROXIMITY, "Is open", 0));
+        alerts.add(new Alert("Sound", Alert.AlertType.SOUND, "Too noisy", 0));
 
         mAdapter = new AlertsAdapter(alerts);
 

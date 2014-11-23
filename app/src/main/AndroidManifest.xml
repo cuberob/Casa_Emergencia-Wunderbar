@@ -27,7 +27,7 @@
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.LoginActivity" />
         <service android:name=".services.SensorDataService" android:exported="false" />
-        
+
     </application>
 
 </manifest>
