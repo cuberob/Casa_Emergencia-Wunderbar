@@ -99,7 +99,7 @@ public class AlarmManager {
         if(!timeInBetween("01:00:00", "22:00:00", System.currentTimeMillis())){ //TODO: Set to 22:00 for demo, change to 6:00 for actual use
             return false;
         }
-        if(level > 4){
+        if(level > 100){
             alert = new Alert("Light", Alert.AlertType.LIGHT, "The room light seems to be on. Light: " + level, Alert.LOW_PRIORITY);
         }else{
             return false;
