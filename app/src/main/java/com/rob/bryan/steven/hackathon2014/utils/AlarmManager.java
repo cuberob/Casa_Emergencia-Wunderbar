@@ -205,7 +205,7 @@ public class AlarmManager {
         return false;
     }
 
-    public ArrayList<Alert> getAlertsList(Context context){
+    public static ArrayList<Alert> getAlertsList(Context context){
         ArrayList<Alert> result = new ArrayList<Alert>();
         JSONArray mArray = getAlertsJSONArray(context);
         for(int i = 0; i < mArray.length(); i++){
