@@ -66,8 +66,6 @@ public class MainActivity extends BaseActivity {
             mLogOut.setVisible(false);
             mLogIn.setVisible(true);
         }
-
-
         return true;
     }
 

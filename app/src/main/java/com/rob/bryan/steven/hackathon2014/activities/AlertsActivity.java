@@ -1,5 +1,6 @@
 package com.rob.bryan.steven.hackathon2014.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -15,9 +18,12 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
+import com.rob.bryan.steven.hackathon2014.object.StopService;
+import com.rob.bryan.steven.hackathon2014.object.UpdateNotification;
 import com.rob.bryan.steven.hackathon2014.services.SensorDataService;
 import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
 
@@ -29,10 +35,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.greenrobot.event.EventBus;
+import io.relayr.RelayrSdk;
 
 
 public class AlertsActivity extends BaseActivity {
 
+    private MenuItem mLogIn;
+    private MenuItem mLogOut;
+    private int loginResultCode = 1337;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -44,6 +54,19 @@ public class AlertsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        login();
+    }
+
+    private void login() {
+        if (!RelayrSdk.isUserLoggedIn()) {
+            startActivityForResult(new Intent(this, LoginActivity.class), loginResultCode);
+        }
+        else {
+            getData();
+        }
+    }
+
+    private void getData() {
         SensorDataService.startActionSubscribe(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
@@ -72,8 +95,70 @@ public class AlertsActivity extends BaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == loginResultCode){
+            login();
+        }
+    }
+
+    @Override
     protected int getLayoutResource() {
         return R.layout.activity_alerts;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        mLogIn = menu.findItem(R.id.action_log_in);
+        mLogOut = menu.findItem(R.id.action_log_out);
+
+        if (RelayrSdk.isUserLoggedIn()) {
+            mLogOut.setVisible(true);
+            mLogIn.setVisible(false);
+        } else {
+            mLogOut.setVisible(false);
+            mLogIn.setVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_log_in:
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+            case R.id.action_log_out:
+                logOut();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void logOut() {
+
+        //call the logOut method on the reayr SDK
+
+        EventBus.getDefault().post(new StopService());
+        RelayrSdk.logOut();
+
+        mLogOut.setVisible(false);
+        mLogIn.setVisible(true);
+
+
+        //use the Toast library to display a message to the user
+        Toast.makeText(this, R.string.successfully_logged_out, Toast.LENGTH_SHORT).show();
     }
 
     class AlertsAdapter extends RecyclerView.Adapter<AlertsAdapter.ViewHolder> {
@@ -150,6 +235,8 @@ public class AlertsActivity extends BaseActivity {
                         mRecyclerView.setVisibility(View.INVISIBLE);
                         mEmptyList.startAnimation(fadeIn);
                     }
+
+                    EventBus.getDefault().post(new UpdateNotification());
                 }
 
             });
