@@ -35,6 +35,7 @@ public class AlertsActivity extends Activity {
 
         String[] items = { "test" };
 
+
         mAdapter = new AlertsAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
     }
