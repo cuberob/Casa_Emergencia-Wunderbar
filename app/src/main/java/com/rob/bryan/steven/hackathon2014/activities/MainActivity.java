@@ -2,30 +2,14 @@ package com.rob.bryan.steven.hackathon2014.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.rob.bryan.steven.hackathon2014.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.relayr.RelayrSdk;
-import io.relayr.model.DeviceModel;
-import io.relayr.model.Reading;
-import io.relayr.model.Transmitter;
-import io.relayr.model.TransmitterDevice;
-import io.relayr.model.User;
-import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-
 
 public class MainActivity extends BaseActivity {
 
