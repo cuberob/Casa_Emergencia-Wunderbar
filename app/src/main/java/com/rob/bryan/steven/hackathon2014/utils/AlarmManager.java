@@ -19,7 +19,7 @@ public class AlarmManager {
     public static final String ALERTS_SP_KEY = "com.steven.bryan.rob.ALERTS_SP_KEY";
     private static String TAG = "AlarmManager";
 
-    public static void checkFridgeTemperature(double temp, Context context){
+    public static boolean checkFridgeTemperature(double temp, Context context){
         Alert alert;
         if(temp < 3){
             //Fridge cool mode is set to high
@@ -29,33 +29,19 @@ public class AlarmManager {
             alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too warm", Alert.HIGH_PRIORITY);
         }else{
             //No Problem
-            return;
+            return false;
         }
+
+        markAsDone(Alert.AlertType.TEMPERATURE, context); //Remove previous entry
 
         JSONArray mAlertsJSONArray = getAlertsJSONArray(context);
-        JSONObject mJSONObject;
-
-        //Loop through alerts to see if a temperature alert already exists.
-        for(int i = 0; i < mAlertsJSONArray.length(); i++){
-            try {
-                mJSONObject = (JSONObject) mAlertsJSONArray.get(i);
-                Alert mTempAlert = new Alert(mJSONObject);
-                if(mTempAlert.getAlertType() == Alert.AlertType.TEMPERATURE){
-                    //Temperature alert already exists, delete so we can re-add later
-                    mAlertsJSONArray.remove(i); //TODO: Fix so it supports API < 19
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
         //Add the Alert as JSONObject to the array
         mAlertsJSONArray.put(alert.getJSONObject());
-
         updateSettings(context, mAlertsJSONArray);
+        return true;
     }
 
-    public static void checkNoiseLevel(int level, Context context){
+    public static boolean checkNoiseLevel(int level, Context context){
         Alert alert;
         if(level > 768){
             alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is very loud", Alert.HIGH_PRIORITY);
@@ -64,39 +50,43 @@ public class AlarmManager {
         }else if(level > 256){
             alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is mildly noisy", Alert.LOW_PRIORITY);
         }else{
-            return;
+            return false;
         }
 
+        markAsDone(Alert.AlertType.SOUND, context); //Remove previous entry
+
+        JSONArray mAlertsJSONArray = getAlertsJSONArray(context);
+        //Add the Alert as JSONObject to the array
+        mAlertsJSONArray.put(alert.getJSONObject());
+        updateSettings(context, mAlertsJSONArray);
+        return true;
+    }
+
+    /**
+     * Deletes the alert from the sharedPrefs
+     * @param alertType alertType to be removed
+     * @param context required to access SharedPrefs
+     */
+    public static void markAsDone(Alert.AlertType alertType, Context context){
         JSONArray mAlertsJSONArray = getAlertsJSONArray(context);
         JSONObject mJSONObject;
 
-        //Loop through alerts to see if a temperature alert already exists.
+        //Loop through alerts to see if a alertType alert already exists.
         for(int i = 0; i < mAlertsJSONArray.length(); i++){
             try {
                 mJSONObject = (JSONObject) mAlertsJSONArray.get(i);
                 Alert mTempAlert = new Alert(mJSONObject);
-                if(mTempAlert.getAlertType() == Alert.AlertType.SOUND){
+                if(mTempAlert.getAlertType() == alertType){
                     //Temperature alert already exists, delete so we can re-add later
                     mAlertsJSONArray.remove(i); //TODO: Fix so it supports API < 19
+                    break; //As there can only be one entry of this alertType, break to skip other checks
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        //Add the Alert as JSONObject to the array
-        mAlertsJSONArray.put(alert.getJSONObject());
-
         updateSettings(context, mAlertsJSONArray);
-    }
-
-    /**
-     * Deletes the alert from the sharedPrefs
-     * @param type
-     * @param context
-     */
-    public static void markAsDone(Alert.AlertType type, Context context){
-
     }
 
     public static JSONArray getAlertsJSONArray(Context context){
