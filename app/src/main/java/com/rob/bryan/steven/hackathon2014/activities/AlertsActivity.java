@@ -1,4 +1,4 @@
-package com.rob.bryan.steven.hackathon2014;
+package com.rob.bryan.steven.hackathon2014.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.rob.bryan.steven.hackathon2014.activities.BaseActivity;
+import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
 
 import java.util.ArrayList;
