@@ -51,7 +51,9 @@ public class SensorDataService extends IntentService {
     private static final String EXTRA_PARAM1 = "com.rob.bryan.steven.hackathon2014.services.extra.PARAM1";
     private static final String EXTRA_PARAM2 = "com.rob.bryan.steven.hackathon2014.services.extra.PARAM2";
 
-    private Subscription mWebSocketSubscription, mTemperatureDeviceSubscription;
+    private Subscription mWebSocketSubscriptionTemp, mTemperatureDeviceSubscription,
+                        mWebSocketSubscriptionProx, mProximityDeviceSubscription,
+                        mWebSocketSubscriptionSound, mSoundDeviceSubscription;
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -104,7 +106,9 @@ public class SensorDataService extends IntentService {
         // TODO: Handle action Foo
         //throw new UnsupportedOperationException("Not yet implemented");
         Log.d("Service", "subscribe");
-        setupSubscription();
+        setupTemperatureSubscription();
+        setupProximitySubscription();
+        setupSoundSubscription();
     }
 
     /**
@@ -116,7 +120,7 @@ public class SensorDataService extends IntentService {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private void setupSubscription(){
+    private void setupTemperatureSubscription(){
         mTemperatureDeviceSubscription = RelayrSdk.getRelayrApi()
                 .getUserInfo()
                 .flatMap(new Func1<User, Observable<List<Transmitter>>>() {
@@ -140,9 +144,7 @@ public class SensorDataService extends IntentService {
                     public Boolean call(List<TransmitterDevice> devices) {
                         // Check whether there is a thermometer among the devices listed under the transmitter.
                         for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())
-                                    || device.model.equals(DeviceModel.LIGHT_PROX_COLOR.getId())
-                                    || device.model.equals(DeviceModel.MICROPHONE)){
+                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())){
                                 return true;
                             }
                         }
@@ -153,9 +155,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public Observable<TransmitterDevice> call(List<TransmitterDevice> devices) {
                         for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())
-                                    || device.model.equals(DeviceModel.LIGHT_PROX_COLOR.getId())
-                                    || device.model.equals(DeviceModel.MICROPHONE.getId())) {
+                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
                                 return Observable.just(device);
                             }
                         }
@@ -178,13 +178,139 @@ public class SensorDataService extends IntentService {
 
                     @Override
                     public void onNext(TransmitterDevice device) {
-                        subscribeForUpdates(device);
+                        subscribeForUpdatesTemp(device);
                     }
                 });
     }
 
-    private void subscribeForUpdates(TransmitterDevice device) {
-        mWebSocketSubscription = RelayrSdk.getWebSocketClient()
+    private void setupProximitySubscription(){
+        mProximityDeviceSubscription = RelayrSdk.getRelayrApi()
+                .getUserInfo()
+                .flatMap(new Func1<User, Observable<List<Transmitter>>>() {
+                    @Override
+                    public Observable<List<Transmitter>> call(User user) {
+                        return RelayrSdk.getRelayrApi().getTransmitters(user.id);
+                    }
+                })
+                .flatMap(new Func1<List<Transmitter>, Observable<List<TransmitterDevice>>>() {
+                    @Override
+                    public Observable<List<TransmitterDevice>> call(List<Transmitter> transmitters) {
+                        // This is a naive implementation. Users may own multiple WunderBars or different
+                        // kinds of transmitters.
+                        if (transmitters.isEmpty())
+                            return Observable.from(new ArrayList<List<TransmitterDevice>>());
+                        return RelayrSdk.getRelayrApi().getTransmitterDevices(transmitters.get(0).id);
+                    }
+                })
+                .filter(new Func1<List<TransmitterDevice>, Boolean>() {
+                    @Override
+                    public Boolean call(List<TransmitterDevice> devices) {
+                        // Check whether there is a thermometer among the devices listed under the transmitter.
+                        for (TransmitterDevice device : devices) {
+                            if (device.model.equals(DeviceModel.LIGHT_PROX_COLOR.getId())){
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                })
+                .flatMap(new Func1<List<TransmitterDevice>, Observable<TransmitterDevice>>() {
+                    @Override
+                    public Observable<TransmitterDevice> call(List<TransmitterDevice> devices) {
+                        for (TransmitterDevice device : devices) {
+                            if (device.model.equals(DeviceModel.LIGHT_PROX_COLOR.getId())) {
+                                return Observable.just(device);
+                            }
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<TransmitterDevice>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(SensorDataService.this, "PROBLEMZ",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(TransmitterDevice device) {
+                        subscribeForUpdatesProx(device);
+                    }
+                });
+    }
+
+    private void setupSoundSubscription(){
+        mProximityDeviceSubscription = RelayrSdk.getRelayrApi()
+                .getUserInfo()
+                .flatMap(new Func1<User, Observable<List<Transmitter>>>() {
+                    @Override
+                    public Observable<List<Transmitter>> call(User user) {
+                        return RelayrSdk.getRelayrApi().getTransmitters(user.id);
+                    }
+                })
+                .flatMap(new Func1<List<Transmitter>, Observable<List<TransmitterDevice>>>() {
+                    @Override
+                    public Observable<List<TransmitterDevice>> call(List<Transmitter> transmitters) {
+                        // This is a naive implementation. Users may own multiple WunderBars or different
+                        // kinds of transmitters.
+                        if (transmitters.isEmpty())
+                            return Observable.from(new ArrayList<List<TransmitterDevice>>());
+                        return RelayrSdk.getRelayrApi().getTransmitterDevices(transmitters.get(0).id);
+                    }
+                })
+                .filter(new Func1<List<TransmitterDevice>, Boolean>() {
+                    @Override
+                    public Boolean call(List<TransmitterDevice> devices) {
+                        // Check whether there is a thermometer among the devices listed under the transmitter.
+                        for (TransmitterDevice device : devices) {
+                            if (device.model.equals(DeviceModel.MICROPHONE.getId())){
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                })
+                .flatMap(new Func1<List<TransmitterDevice>, Observable<TransmitterDevice>>() {
+                    @Override
+                    public Observable<TransmitterDevice> call(List<TransmitterDevice> devices) {
+                        for (TransmitterDevice device : devices) {
+                            if (device.model.equals(DeviceModel.MICROPHONE.getId())) {
+                                return Observable.just(device);
+                            }
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<TransmitterDevice>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(SensorDataService.this, "PROBLEMZ",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(TransmitterDevice device) {
+                        subscribeForUpdatesSound(device);
+                    }
+                });
+    }
+
+    private void subscribeForUpdatesTemp(TransmitterDevice device) {
+        mWebSocketSubscriptionTemp = RelayrSdk.getWebSocketClient()
                 .subscribe(device, new Subscriber<Object>() {
 
                     @Override
@@ -211,11 +337,64 @@ public class SensorDataService extends IntentService {
                 });
     }
 
+    private void subscribeForUpdatesProx(TransmitterDevice device) {
+        mWebSocketSubscriptionTemp = RelayrSdk.getWebSocketClient()
+                .subscribe(device, new Subscriber<Object>() {
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(SensorDataService.this, "A PROBLEM",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        Reading reading = new Gson().fromJson(o.toString(), Reading.class);
+                        //Log.d("SensorDataService", reading.temp + "˚C");
+                        if (AlarmManager.checkLight(reading.light, SensorDataService.this)
+                                || AlarmManager.checkWindowOpen(reading.prox, SensorDataService.this)) {
+                            showNotification();
+                        }
+                    }
+                });
+    }
+
+    private void subscribeForUpdatesSound(TransmitterDevice device) {
+        mWebSocketSubscriptionTemp = RelayrSdk.getWebSocketClient()
+                .subscribe(device, new Subscriber<Object>() {
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(SensorDataService.this, "A PROBLEM",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        Reading reading = new Gson().fromJson(o.toString(), Reading.class);
+                        //Log.d("SensorDataService", reading.temp + "˚C");
+                        if (AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this)) {
+                            showNotification();
+                        }
+                    }
+                });
+    }
+
     private void showNotification() {
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_stat_hotel)
                         .setContentTitle(getResources().getString(R.string.notification_title))
                         .setContentText("test");
 
