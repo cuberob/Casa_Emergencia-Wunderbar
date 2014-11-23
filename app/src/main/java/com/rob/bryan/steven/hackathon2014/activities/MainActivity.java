@@ -2,134 +2,45 @@ package com.rob.bryan.steven.hackathon2014.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.rob.bryan.steven.hackathon2014.R;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
 
 import io.relayr.RelayrSdk;
-import io.relayr.model.DeviceModel;
-import io.relayr.model.Reading;
-import io.relayr.model.Transmitter;
-import io.relayr.model.TransmitterDevice;
-import io.relayr.model.User;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends BaseActivity {
 
     private String TAG = "MainActivity";
-    private Subscription mWebSocketSubscription, mTemperatureDeviceSubscription;
     private MenuItem mLogIn;
     private MenuItem mLogOut;
+    private int loginResultCode = 1337;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+    }
 
+
+    private void login() {
         if (!RelayrSdk.isUserLoggedIn()) {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivityForResult(new Intent(this, LoginActivity.class), loginResultCode);
         }
-        setupSubscription();
-
+        else {
+            startActivity(new Intent(this, AlertsActivity.class));
+        }
     }
 
-    private void setupSubscription(){
-        mTemperatureDeviceSubscription = RelayrSdk.getRelayrApi()
-                .getUserInfo()
-                .flatMap(new Func1<User, Observable<List<Transmitter>>>() {
-                    @Override
-                    public Observable<List<Transmitter>> call(User user) {
-                        return RelayrSdk.getRelayrApi().getTransmitters(user.id);
-                    }
-                })
-                .flatMap(new Func1<List<Transmitter>, Observable<List<TransmitterDevice>>>() {
-                    @Override
-                    public Observable<List<TransmitterDevice>> call(List<Transmitter> transmitters) {
-                        // This is a naive implementation. Users may own multiple WunderBars or different
-                        // kinds of transmitters.
-                        if (transmitters.isEmpty())
-                            return Observable.from(new ArrayList<List<TransmitterDevice>>());
-                        return RelayrSdk.getRelayrApi().getTransmitterDevices(transmitters.get(0).id);
-                    }
-                })
-                .filter(new Func1<List<TransmitterDevice>, Boolean>() {
-                    @Override
-                    public Boolean call(List<TransmitterDevice> devices) {
-                        // Check whether there is a thermometer among the devices listed under the transmitter.
-                        for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                })
-                .flatMap(new Func1<List<TransmitterDevice>, Observable<TransmitterDevice>>() {
-                    @Override
-                    public Observable<TransmitterDevice> call(List<TransmitterDevice> devices) {
-                        for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
-                                return Observable.just(device);
-                            }
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<TransmitterDevice>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "PROBLEMZ",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(TransmitterDevice device) {
-                        subscribeForTemperatureUpdates(device);
-                    }
-                });
-    }
-
-    private void subscribeForTemperatureUpdates(TransmitterDevice device) {
-        mWebSocketSubscription = RelayrSdk.getWebSocketClient()
-                .subscribe(device, new Subscriber<Object>() {
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "A PROBLEM",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d(TAG, reading.temp + "˚C");
-                    }
-                });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == loginResultCode){
+            login();
+        }
     }
 
     @Override
@@ -180,7 +91,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void logOut() {
-
         //call the logOut method on the reayr SDK
         RelayrSdk.logOut();
 
