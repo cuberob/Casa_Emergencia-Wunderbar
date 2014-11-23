@@ -1,5 +1,8 @@
 package com.rob.bryan.steven.hackathon2014.object;
 
+import android.content.Context;
+import android.text.format.DateUtils;
+
 import com.rob.bryan.steven.hackathon2014.R;
 
 /**
