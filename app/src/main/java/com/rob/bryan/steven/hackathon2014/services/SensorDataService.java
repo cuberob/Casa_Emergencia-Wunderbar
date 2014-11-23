@@ -327,15 +327,8 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-<<<<<<< HEAD
-                        if (AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this)
-                                || AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this)
-                                || AlarmManager.checkLight(reading.light, SensorDataService.this)
-                                || AlarmManager.checkWindowOpen(reading.prox, SensorDataService.this)) {
-=======
-                        //Log.d("SensorDataService", reading.temp + "˚C");
+                        Log.d("Sensed", "Temp: " + reading.temp + "˚C");
                         if (AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this)) {
->>>>>>> 94096f68bc835ed75281e2086bfc9d41f29476f1
                             showNotification();
                         }
                     }
@@ -360,7 +353,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        //Log.d("SensorDataService", reading.temp + "˚C");
+                        Log.d("Sensed", "Light:" + reading.light + "\nProx: " + reading.prox);
                         if (AlarmManager.checkLight(reading.light, SensorDataService.this)
                                 || AlarmManager.checkWindowOpen(reading.prox, SensorDataService.this)) {
                             showNotification();
@@ -387,7 +380,7 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        //Log.d("SensorDataService", reading.temp + "˚C");
+                        Log.d("Sensed", "Sound: " + reading.snd_level);
                         if (AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this)) {
                             showNotification();
                         }
