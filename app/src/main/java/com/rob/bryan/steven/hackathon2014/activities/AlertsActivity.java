@@ -124,6 +124,8 @@ public class AlertsActivity extends BaseActivity {
                     mAdapter.notifyItemRemoved(alerts.indexOf(alert));
                     alerts.remove(alert);
 
+                    AlarmManager.markAsDone(alert.getAlertType(), getApplicationContext());
+
                     AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
                     fadeIn.setInterpolator(new AccelerateInterpolator());
                     fadeIn.setDuration(300);
