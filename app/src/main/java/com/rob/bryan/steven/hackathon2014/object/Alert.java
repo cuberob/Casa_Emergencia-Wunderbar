@@ -15,7 +15,7 @@ public class Alert {
     public static final String JSON_TYPE_KEY = "type";
     public static final String JSON_DESCRIPTION_KEY = "description";
     public static final String JSON_PRIORITY_KEY = "priority";
-    public static final int HIGH_PRIORITY = 3, MEDIUM_PRIORITY = 2, LOW_PRIORITY = 1;
+    public static final int HIGH_PRIORITY = 3, MEDIUM_PRIORITY = 2, LOW_PRIORITY = 1, XXX_PRIORITY = 0;
     private long alertTime;
     private String name, description;
     private int priority;
@@ -175,6 +175,8 @@ public class Alert {
                 return R.color.orange_600;
             case(HIGH_PRIORITY):
                 return R.color.red_600;
+            case(XXX_PRIORITY):
+                return R.color.pink_600;
             default:
                 return R.color.red_600;
         }

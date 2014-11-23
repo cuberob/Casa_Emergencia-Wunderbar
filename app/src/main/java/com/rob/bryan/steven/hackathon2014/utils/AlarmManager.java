@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.greenrobot.event.EventBus;
+import io.relayr.model.AccelGyroscope;
 
 /**
  * Created by robdeknegt on 23/11/14.
@@ -103,6 +104,25 @@ public class AlarmManager {
         }
 
         markAsDone(Alert.AlertType.LIGHT, context); //Remove previous entry
+
+        JSONArray mAlertsJSONArray = getAlertsJSONArray(context);
+        //Add the Alert as JSONObject to the array
+        mAlertsJSONArray.put(alert.getJSONObject());
+        updateSettings(context, mAlertsJSONArray);
+
+        EventBus.getDefault().post(alert);
+        return true;
+    }
+
+    public static boolean checkIfGettingLaid(AccelGyroscope.Accelerometer accelerometer, Context context){
+        Alert alert;
+        if(accelerometer.x > 0.1 && accelerometer.y > 0.1){
+            alert = new Alert("F$#&!", Alert.AlertType.MOVEMENT, "Someone is getting laid...", Alert.XXX_PRIORITY);
+        }else{
+            return false;
+        }
+
+        markAsDone(Alert.AlertType.MOVEMENT, context); //Remove previous entry
 
         JSONArray mAlertsJSONArray = getAlertsJSONArray(context);
         //Add the Alert as JSONObject to the array
