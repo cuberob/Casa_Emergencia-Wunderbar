@@ -1,11 +1,15 @@
-package com.rob.bryan.steven.hackathon2014;
+package com.rob.bryan.steven.hackathon2014.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.activities.BaseActivity;
+
+import io.relayr.RelayrSdk;
 
 
 public class MainActivity extends BaseActivity {
@@ -14,6 +18,10 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+
+        if (!RelayrSdk.isUserLoggedIn()) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
     }
 
     @Override

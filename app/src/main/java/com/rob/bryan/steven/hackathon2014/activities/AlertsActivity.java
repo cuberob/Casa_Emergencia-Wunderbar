@@ -1,4 +1,4 @@
-package com.rob.bryan.steven.hackathon2014;
+package com.rob.bryan.steven.hackathon2014.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
 
 import java.util.ArrayList;
