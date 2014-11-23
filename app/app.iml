@@ -89,6 +89,7 @@
     <orderEntry type="library" exported="" name="retrofit-1.7.0" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-0.21.0" level="project" />
     <orderEntry type="library" exported="" name="okio-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-2.2.1" level="project" />
     <orderEntry type="library" exported="" name="slf4j-api-1.7.5" level="project" />
     <orderEntry type="library" exported="" name="pubnub-3.6.3" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.2" level="project" />
