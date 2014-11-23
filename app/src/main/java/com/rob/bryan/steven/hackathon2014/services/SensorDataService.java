@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rob.bryan.steven.hackathon2014.R;
+import com.rob.bryan.steven.hackathon2014.object.Alert;
 import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
 
 import java.util.ArrayList;
@@ -192,7 +193,8 @@ public class SensorDataService extends IntentService {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
                         Log.d("SensorDataService", reading.temp + "˚C");
                         AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this);
-                        EventBus.getDefault().post(true);
+                        AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this);
+                        EventBus.getDefault().post(new Alert("temp", Alert.AlertType.TEMPERATURE, 0));
                     }
                 });
     }

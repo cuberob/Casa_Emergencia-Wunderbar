@@ -129,19 +129,26 @@ public class AlertsActivity extends BaseActivity {
         }
     }
 
-    public void onEvent(boolean isUpdate) {
-        Log.d("AlertsActivity", "boolean: " + isUpdate);
+    public void onEvent(Alert isUpdate) {
+        updateList();
+        Log.d("AlertsActivity", "boolean: " + isUpdate.getDescription());
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("Alerts", "onResume");
         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
+        Log.d("Alerts", "onPause");
         super.onPause();
+    }
+
+    private void updateList() {
+
     }
 }
