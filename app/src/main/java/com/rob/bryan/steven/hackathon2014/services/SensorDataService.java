@@ -140,9 +140,9 @@ public class SensorDataService extends IntentService {
                     public Boolean call(List<TransmitterDevice> devices) {
                         // Check whether there is a thermometer among the devices listed under the transmitter.
                         for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
+                            //if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
                                 return true;
-                            }
+                            //}
                         }
                         return false;
                     }
@@ -215,10 +215,10 @@ public class SensorDataService extends IntentService {
                         .setContentTitle(getResources().getString(R.string.notification_title))
                         .setContentText("test");
 
-        JSONArray jsonArray = AlarmManager.getAlertsJSONArray(SensorDataService.this);
+        ArrayList<Alert> alertList = AlarmManager.getAlertsList(SensorDataService.this);
         ArrayList<Notification> pages = new ArrayList<Notification>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            /*Alert alert = new Alert((JSONObject)jsonArray.get(i));
+        for (int i = 0; i < alertList.size(); i++) {
+            Alert alert = alertList.get(i);
             NotificationCompat.BigTextStyle pageStyle = new NotificationCompat.BigTextStyle();
             pageStyle.setBigContentTitle(alert.getAlertTypeString())
                     .bigText(alert.getDescription())
@@ -228,7 +228,7 @@ public class SensorDataService extends IntentService {
                     new NotificationCompat.Builder(this)
                             .setStyle(pageStyle)
                             .build();
-            pages.add(notificationPage);*/
+            pages.add(notificationPage);
         }
 
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
