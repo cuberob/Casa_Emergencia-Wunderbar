@@ -2,6 +2,7 @@ package com.rob.bryan.steven.hackathon2014.services;
 
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,16 +14,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rob.bryan.steven.hackathon2014.R;
+import com.rob.bryan.steven.hackathon2014.activities.AlertsActivity;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
 import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import io.relayr.RelayrSdk;
 import io.relayr.model.DeviceModel;
 import io.relayr.model.Reading;
@@ -396,10 +394,17 @@ public class SensorDataService extends IntentService {
     private void showNotification() {
         if (System.currentTimeMillis() > mNewUpdateTime) {
             mNewUpdateTime += SILENT_TIME;
+
+            Intent actionIntent = new Intent(this, AlertsActivity.class);
+            PendingIntent pendingIntent =
+                    PendingIntent.getActivity(this, 0, actionIntent, 0);
+
             ArrayList<Alert> alertList = AlarmManager.getAlertsList(SensorDataService.this);
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.ic_stat_hotel)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
                             .setContentTitle(getResources().getString(R.string.notification_title))
                             .setContentText(String.format(getResources().getString(R.string.notification_message), alertList.size()));
 
