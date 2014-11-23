@@ -9,7 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rob.bryan.steven.hackathon2014.R;
@@ -26,6 +30,7 @@ public class AlertsActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayout mEmptyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,8 @@ public class AlertsActivity extends BaseActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
         mRecyclerView.setHasFixedSize(true);
+
+        mEmptyList = (LinearLayout) findViewById(R.id.list_empty);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -48,18 +55,6 @@ public class AlertsActivity extends BaseActivity {
         alerts.add(new Alert("Sound", Alert.AlertType.SOUND, "Too noisy", 0));
 
         mAdapter = new AlertsAdapter(alerts);
-
-        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                if (mAdapter.getItemCount() == 0) {
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                } else {
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -118,6 +113,31 @@ public class AlertsActivity extends BaseActivity {
                 public void onClick(View card) {
                     mAdapter.notifyItemRemoved(alerts.indexOf(alert));
                     alerts.remove(alert);
+
+                    AlphaAnimation fadeIn = new AlphaAnimation(0, 1);
+                    fadeIn.setInterpolator(new AccelerateInterpolator());
+                    fadeIn.setDuration(300);
+                    fadeIn.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            mEmptyList.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+
+                    if (alerts.size() == 0) {
+                        mRecyclerView.setVisibility(View.INVISIBLE);
+                        mEmptyList.startAnimation(fadeIn);
+                    }
                 }
 
             });
