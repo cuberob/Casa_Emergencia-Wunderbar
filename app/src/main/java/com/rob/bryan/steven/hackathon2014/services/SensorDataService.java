@@ -140,9 +140,11 @@ public class SensorDataService extends IntentService {
                     public Boolean call(List<TransmitterDevice> devices) {
                         // Check whether there is a thermometer among the devices listed under the transmitter.
                         for (TransmitterDevice device : devices) {
-                            //if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
+                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())
+                                    || device.model.equals(DeviceModel.LIGHT_PROX_COLOR.getId())
+                                    || device.model.equals(DeviceModel.MICROPHONE)){
                                 return true;
-                            //}
+                            }
                         }
                         return false;
                     }
@@ -151,7 +153,9 @@ public class SensorDataService extends IntentService {
                     @Override
                     public Observable<TransmitterDevice> call(List<TransmitterDevice> devices) {
                         for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
+                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())
+                                    || device.model.equals(DeviceModel.LIGHT_PROX_COLOR.getId())
+                                    || device.model.equals(DeviceModel.MICROPHONE.getId())) {
                                 return Observable.just(device);
                             }
                         }
