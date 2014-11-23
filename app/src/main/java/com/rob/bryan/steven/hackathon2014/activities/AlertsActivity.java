@@ -23,6 +23,8 @@ import com.rob.bryan.steven.hackathon2014.services.SensorDataService;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+
 
 public class AlertsActivity extends BaseActivity {
 
@@ -148,4 +150,19 @@ public class AlertsActivity extends BaseActivity {
         }
     }
 
+    public void onEvent(boolean isUpdate) {
+        Log.d("AlertsActivity", "boolean: " + isUpdate);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
 }

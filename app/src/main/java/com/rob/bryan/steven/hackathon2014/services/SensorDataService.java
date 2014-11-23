@@ -8,10 +8,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rob.bryan.steven.hackathon2014.R;
+import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import io.relayr.RelayrSdk;
 import io.relayr.model.DeviceModel;
 import io.relayr.model.Reading;
@@ -165,12 +167,12 @@ public class SensorDataService extends IntentService {
 
                     @Override
                     public void onNext(TransmitterDevice device) {
-                        subscribeForTemperatureUpdates(device);
+                        subscribeForUpdates(device);
                     }
                 });
     }
 
-    private void subscribeForTemperatureUpdates(TransmitterDevice device) {
+    private void subscribeForUpdates(TransmitterDevice device) {
         mWebSocketSubscription = RelayrSdk.getWebSocketClient()
                 .subscribe(device, new Subscriber<Object>() {
 
@@ -189,6 +191,8 @@ public class SensorDataService extends IntentService {
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
                         Log.d("SensorDataService", reading.temp + "˚C");
+                        AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this);
+                        EventBus.getDefault().post(true);
                     }
                 });
     }
