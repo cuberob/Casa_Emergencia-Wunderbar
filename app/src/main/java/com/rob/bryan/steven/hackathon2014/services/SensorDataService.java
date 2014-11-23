@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -42,6 +44,7 @@ import rx.schedulers.Schedulers;
  * helper methods.
  */
 public class SensorDataService extends IntentService {
+    private static final int SILENT_TIME = 5000;
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_SUBSCRIBE = "com.rob.bryan.steven.hackathon2014.services.action.SUBSCIRBE";
@@ -55,6 +58,9 @@ public class SensorDataService extends IntentService {
                         mWebSocketSubscriptionProx, mProximityDeviceSubscription,
                         mWebSocketSubscriptionSound, mSoundDeviceSubscription;
 
+
+    private Bitmap mBitmap;
+    private float mNewUpdateTime;
     /**
      * Starts this service to perform action Foo with the given parameters. If
      * the service is already performing a task this action will be queued.
@@ -89,7 +95,6 @@ public class SensorDataService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("Service", "handleIntent");
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_SUBSCRIBE.equals(action)) {
@@ -103,9 +108,9 @@ public class SensorDataService extends IntentService {
     }
 
     private void handleActionSubscribe() {
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_warning);
+        mNewUpdateTime = 0;
         // TODO: Handle action Foo
-        //throw new UnsupportedOperationException("Not yet implemented");
-        Log.d("Service", "subscribe");
         setupTemperatureSubscription();
         setupProximitySubscription();
         setupSoundSubscription();
@@ -389,43 +394,46 @@ public class SensorDataService extends IntentService {
     }
 
     private void showNotification() {
+        if (System.currentTimeMillis() > mNewUpdateTime) {
+            mNewUpdateTime += SILENT_TIME;
+            ArrayList<Alert> alertList = AlarmManager.getAlertsList(SensorDataService.this);
+            NotificationCompat.Builder notificationBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_stat_hotel)
+                            .setContentTitle(getResources().getString(R.string.notification_title))
+                            .setContentText(String.format(getResources().getString(R.string.notification_message), alertList.size()));
 
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_hotel)
-                        .setContentTitle(getResources().getString(R.string.notification_title))
-                        .setContentText("test");
+            ArrayList<Notification> pages = new ArrayList<Notification>();
+            for (int i = 0; i < alertList.size(); i++) {
+                Alert alert = alertList.get(i);
+                NotificationCompat.BigTextStyle pageStyle = new NotificationCompat.BigTextStyle();
+                pageStyle.setBigContentTitle(alert.getAlertTypeString())
+                        .bigText(alert.getDescription())
+                        .build();
 
-        ArrayList<Alert> alertList = AlarmManager.getAlertsList(SensorDataService.this);
-        ArrayList<Notification> pages = new ArrayList<Notification>();
-        for (int i = 0; i < alertList.size(); i++) {
-            Alert alert = alertList.get(i);
-            NotificationCompat.BigTextStyle pageStyle = new NotificationCompat.BigTextStyle();
-            pageStyle.setBigContentTitle(alert.getAlertTypeString())
-                    .bigText(alert.getDescription())
+                Notification notificationPage =
+                        new NotificationCompat.Builder(this)
+                                .setStyle(pageStyle)
+                                .build();
+                pages.add(notificationPage);
+            }
+
+            NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
+            wearableExtender.addPages(pages);
+            wearableExtender.setBackground(mBitmap);
+
+
+            Notification notification = notificationBuilder.extend(wearableExtender)
                     .build();
 
-            Notification notificationPage =
-                    new NotificationCompat.Builder(this)
-                            .setStyle(pageStyle)
-                            .build();
-            pages.add(notificationPage);
+            int notificationId = 001;
+
+            // Get an instance of the NotificationManager service
+            NotificationManagerCompat notificationManager =
+                    NotificationManagerCompat.from(this);
+
+            // Build the notification and issues it with notification manager.
+            notificationManager.notify(notificationId, notification);
         }
-
-        NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
-        wearableExtender.addPages(pages);
-
-
-        Notification notification = notificationBuilder.extend(wearableExtender)
-                .build();
-
-        int notificationId = 001;
-
-        // Get an instance of the NotificationManager service
-        NotificationManagerCompat notificationManager =
-                NotificationManagerCompat.from(this);
-
-        // Build the notification and issues it with notification manager.
-        notificationManager.notify(notificationId, notification);
     }
 }
