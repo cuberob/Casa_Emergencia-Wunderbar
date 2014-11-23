@@ -539,6 +539,11 @@ public class SensorDataService extends IntentService {
     }
 
     public void onEvent(StopService stopService) {
+        mTemperatureDeviceSubscription.unsubscribe();
+        mProximityDeviceSubscription.unsubscribe();
+        mAccelerationDeviceSubscription.unsubscribe();
+        mSoundDeviceSubscription.unsubscribe();
+        mWebSocketSubscriptionAccel.unsubscribe();
         onDestroy();
     }
 
