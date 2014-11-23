@@ -15,13 +15,13 @@ public class Alert {
         TEMPERATURE, SOUND, PROXIMITY, LIGHT, PRESSURE, MOVEMENT
     }
 
-    Alert(String name, AlertType type){
+    public Alert(String name, AlertType type){
         this.name = name;
         this.alertType = type;
         alertTime = System.currentTimeMillis();
     }
 
-    Alert(String name, AlertType alertType, String description){
+    public Alert(String name, AlertType alertType, String description){
         this.name = name;
         this.alertType = alertType;
         this.description = description;
