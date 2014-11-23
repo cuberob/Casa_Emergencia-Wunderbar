@@ -11,21 +11,19 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name=".HackathonApp">
+
         <activity
-            android:name=".activities.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".activities.AlertsActivity"
+            android:label="Casa Emergencia" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.rob.bryan.steven.hackathon2014.MainActivity"
-            android:label="@string/title_activity_alerts" >
-        </activity>
-        <activity android:name=".activities.LoginActivity"
-            android:label="@string/app_name"/>
+
+        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.LoginActivity" />
     </application>
 
 </manifest>

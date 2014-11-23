@@ -283,9 +283,9 @@
     <color name="press_color">#0f000000</color>
 
     <!-- Colors for the app -->
-    <color name="colorPrimaryLight">@color/green_100</color>
-    <color name="colorPrimary">@color/green_500</color>
-    <color name="colorPrimaryDark">@color/green_700</color>
+    <color name="colorPrimaryLight">@color/indigo_100</color>
+    <color name="colorPrimary">@color/indigo_500</color>
+    <color name="colorPrimaryDark">@color/indigo_700</color>
     <color name="colorAccentLight">@color/light_blue_A100</color>
     <color name="colorAccent">@color/light_blue_A200</color>
     <color name="colorAccentDark">@color/light_blue_A400</color>

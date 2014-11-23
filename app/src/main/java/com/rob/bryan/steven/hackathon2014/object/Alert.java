@@ -83,13 +83,13 @@ public class Alert {
     public String getAlertTypeString(){
         switch (alertType) {
             case TEMPERATURE:
-                return "Temp";
+                return "Temperature";
             case MOVEMENT:
-                return "Move";
+                return "Movement";
             case SOUND:
                 return "Sound";
             case PROXIMITY:
-                return "Prox";
+                return "Proximity";
             case LIGHT:
                 return "Light";
             default:
