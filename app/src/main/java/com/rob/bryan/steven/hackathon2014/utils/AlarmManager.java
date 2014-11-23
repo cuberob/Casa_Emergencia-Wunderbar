@@ -32,10 +32,10 @@ public class AlarmManager {
         Alert alert;
         if(temp < 3){
             //Fridge cool mode is set to high
-            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too cold", Alert.MEDIUM_PRIORITY);
-        }else if(temp > 11){
+            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too cold. Temp: " + temp, Alert.MEDIUM_PRIORITY);
+        }else if(temp > 31){ //TODO: Change to 11, this is just for the demo
             //Fridge it too warm (open/defect?)
-            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too warm", Alert.HIGH_PRIORITY);
+            alert = new Alert("Fridge", Alert.AlertType.TEMPERATURE, "Fridge is too warm. Temp: " + temp, Alert.HIGH_PRIORITY);
         }else{
             //No Problem
             return false;
@@ -55,11 +55,11 @@ public class AlarmManager {
     public static boolean checkNoiseLevel(float level, Context context){
         Alert alert;
         if(level > 768){
-            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is very loud", Alert.HIGH_PRIORITY);
+            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is very loud. Level: " + level, Alert.HIGH_PRIORITY);
         }else if(level > 512){
-            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is noisy", Alert.MEDIUM_PRIORITY);
+            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is noisy. Level: " + level, Alert.MEDIUM_PRIORITY);
         }else if(level > 256){
-            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is mildly noisy", Alert.LOW_PRIORITY);
+            alert = new Alert("Sound", Alert.AlertType.SOUND, "The room is mildly noisy. Level: " + level, Alert.LOW_PRIORITY);
         }else{
             return false;
         }
@@ -78,7 +78,7 @@ public class AlarmManager {
     public static boolean checkWindowOpen(float distance, Context context){
         Alert alert;
         if(distance < 1900){
-            alert = new Alert("Window", Alert.AlertType.PROXIMITY, "The windows is still open", Alert.HIGH_PRIORITY);
+            alert = new Alert("Window", Alert.AlertType.PROXIMITY, "The windows is still open. Prox: " + distance, Alert.HIGH_PRIORITY);
         }else{
             return false;
         }
@@ -96,11 +96,11 @@ public class AlarmManager {
 
     public static boolean checkLight(float level, Context context){
         Alert alert;
-        if(!timeInBetween("01:00:00", "06:00:00", System.currentTimeMillis())){
+        if(!timeInBetween("01:00:00", "22:00:00", System.currentTimeMillis())){ //TODO: Set to 22:00 for demo, change to 6:00 for actual use
             return false;
         }
         if(level > 4){
-            alert = new Alert("Light", Alert.AlertType.LIGHT, "The room light seems to be on", Alert.LOW_PRIORITY);
+            alert = new Alert("Light", Alert.AlertType.LIGHT, "The room light seems to be on. Light: " + level, Alert.LOW_PRIORITY);
         }else{
             return false;
         }
