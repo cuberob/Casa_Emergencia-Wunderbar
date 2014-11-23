@@ -2,9 +2,6 @@ package com.rob.bryan.steven.hackathon2014.object;
 
 import com.rob.bryan.steven.hackathon2014.R;
 
-/**
- * Created by robdeknegt on 23/11/14.
- */
 public class Alert {
 
     private long alertTime;
@@ -12,7 +9,7 @@ public class Alert {
     private AlertType alertType;
 
     public enum AlertType {
-        TEMPERATURE, SOUND, PROXIMITY, LIGHT, PRESSURE, MOVEMENT
+        TEMPERATURE, SOUND, PROXIMITY, LIGHT, MOVEMENT
     }
 
     public Alert(String name, AlertType type){
@@ -75,10 +72,25 @@ public class Alert {
                 return R.drawable.proximity_icon;
             case LIGHT:
                 return R.drawable.light_icon;
-            case PRESSURE:
-                return R.drawable.pressure_icon;
             default:
                 return android.R.drawable.btn_star_big_on;
+        }
+    }
+
+    public String getAlertTypeString(){
+        switch (alertType) {
+            case TEMPERATURE:
+                return "Temp";
+            case MOVEMENT:
+                return "Move";
+            case SOUND:
+                return "Sound";
+            case PROXIMITY:
+                return "Prox";
+            case LIGHT:
+                return "Light";
+            default:
+                return "None";
         }
     }
 
