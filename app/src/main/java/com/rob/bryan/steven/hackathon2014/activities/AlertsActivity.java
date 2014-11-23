@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
+import com.rob.bryan.steven.hackathon2014.services.SensorDataService;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,8 @@ public class AlertsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SensorDataService.startActionSubscribe(this);
+
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
         mRecyclerView.setHasFixedSize(true);
 
@@ -33,11 +36,11 @@ public class AlertsActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         ArrayList<Alert> alerts = new ArrayList<Alert>();
-        alerts.add(new Alert("Light is defect", Alert.AlertType.LIGHT));
-        alerts.add(new Alert("Refrigerator is too warm", Alert.AlertType.TEMPERATURE));
-        alerts.add(new Alert("Room is too cold", Alert.AlertType.TEMPERATURE));
-        alerts.add(new Alert("Window is open", Alert.AlertType.PROXIMITY));
-        alerts.add(new Alert("Sound level is too noisy", Alert.AlertType.SOUND));
+        alerts.add(new Alert("Light is defect", Alert.AlertType.LIGHT, 0));
+        alerts.add(new Alert("Refrigerator is too warm", Alert.AlertType.TEMPERATURE, 0));
+        alerts.add(new Alert("Room is too cold", Alert.AlertType.TEMPERATURE, 0));
+        alerts.add(new Alert("Window is open", Alert.AlertType.PROXIMITY, 0));
+        alerts.add(new Alert("Sound level is too noisy", Alert.AlertType.SOUND, 0));
 
         mAdapter = new AlertsAdapter(alerts);
         mRecyclerView.setAdapter(mAdapter);
