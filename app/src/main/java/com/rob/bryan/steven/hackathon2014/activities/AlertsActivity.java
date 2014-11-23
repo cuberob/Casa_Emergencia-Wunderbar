@@ -54,6 +54,14 @@ public class AlertsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mRecyclerView.setHasFixedSize(true);
+
+        mEmptyList = (LinearLayout) findViewById(R.id.list_empty);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
         login();
     }
 
@@ -68,14 +76,6 @@ public class AlertsActivity extends BaseActivity {
 
     private void getData() {
         SensorDataService.startActionSubscribe(this);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        mRecyclerView.setHasFixedSize(true);
-
-        mEmptyList = (LinearLayout) findViewById(R.id.list_empty);
-
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
 
         alerts = new ArrayList<Alert>();
 
