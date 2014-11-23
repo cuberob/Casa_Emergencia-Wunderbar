@@ -222,7 +222,9 @@ public class AlertsActivity extends BaseActivity {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            mEmptyList.setVisibility(View.VISIBLE);
+                            if (alerts.size() == 0) {
+                                mEmptyList.setVisibility(View.VISIBLE);
+                            }
                         }
 
                         @Override
