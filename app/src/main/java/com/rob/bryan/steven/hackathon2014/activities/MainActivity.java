@@ -29,13 +29,10 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
-<<<<<<< HEAD
     private String TAG = "MainActivity";
     private Subscription mWebSocketSubscription, mTemperatureDeviceSubscription;
-=======
     private MenuItem mLogIn;
     private MenuItem mLogOut;
->>>>>>> 136d6b31c4a2ab50751e19e34a20eee3ec6de52b
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
