@@ -5,27 +5,62 @@ import android.text.format.DateUtils;
 
 import com.rob.bryan.steven.hackathon2014.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Alert {
 
+    public static final String JSON_NAME_KEY = "name";
+    public static final String JSON_TIME_KEY = "time";
+    public static final String JSON_TYPE_KEY = "type";
+    public static final String JSON_DESCRIPTION_KEY = "description";
+    public static final String JSON_PRIORITY_KEY = "priority";
+    public static final int HIGH_PRIORITY = 3, MEDIUM_PRIORITY = 2, LOW_PRIORITY = 1;
     private long alertTime;
     private String name, description;
+    private int priority;
     private AlertType alertType;
 
     public enum AlertType {
         TEMPERATURE, SOUND, PROXIMITY, LIGHT, MOVEMENT
     }
 
-    public Alert(String name, AlertType type){
+    public Alert(String name, AlertType type, int priority){
         this.name = name;
         this.alertType = type;
+        this.priority = priority;
         alertTime = System.currentTimeMillis();
     }
 
-    public Alert(String name, AlertType alertType, String description){
+    public Alert(String name, AlertType alertType, String description, int priority){
         this.name = name;
         this.alertType = alertType;
         this.description = description;
+        this.priority = priority;
         alertTime = System.currentTimeMillis();
+    }
+
+    public Alert(JSONObject object){
+        try {
+            this.name = object.getString(JSON_NAME_KEY);
+            this.alertTime = object.getLong(JSON_TIME_KEY);
+            this.alertType = getAlertTypeFromString(object.getString(JSON_TYPE_KEY));
+            this.priority = object.getInt(JSON_PRIORITY_KEY);
+            if(object.has(JSON_DESCRIPTION_KEY)){
+                this.description = object.getString(JSON_DESCRIPTION_KEY);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public void setName(String name){
@@ -80,6 +115,25 @@ public class Alert {
         }
     }
 
+    public static AlertType getAlertTypeFromString(String str){
+        if(str.equals("Temp")){
+            return AlertType.TEMPERATURE;
+        }
+        if(str.equals("Move")){
+            return AlertType.MOVEMENT;
+        }
+        if(str.equals("Sound")){
+            return AlertType.SOUND;
+        }
+        if(str.equals("Prox")){
+            return AlertType.PROXIMITY;
+        }
+        if(str.equals("Light")){
+            return AlertType.LIGHT;
+        }
+        return null;
+    }
+
     public String getAlertTypeString(){
         switch (alertType) {
             case TEMPERATURE:
@@ -95,6 +149,22 @@ public class Alert {
             default:
                 return "None";
         }
+    }
+
+    public JSONObject getJSONObject(){
+        JSONObject result = new JSONObject();
+        try {
+            result.put(JSON_NAME_KEY, name);
+            if(description != null) {
+                result.put(JSON_DESCRIPTION_KEY, description);
+            }
+            result.put(JSON_PRIORITY_KEY, priority);
+            result.put(JSON_TYPE_KEY, getAlertTypeString());
+            result.put(JSON_TIME_KEY, alertTime);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

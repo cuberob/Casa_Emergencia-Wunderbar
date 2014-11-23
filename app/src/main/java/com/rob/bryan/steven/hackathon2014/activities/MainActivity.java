@@ -33,103 +33,32 @@ public class MainActivity extends BaseActivity {
     private Subscription mWebSocketSubscription, mTemperatureDeviceSubscription;
     private MenuItem mLogIn;
     private MenuItem mLogOut;
+    private int loginResultCode = 1337;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 
+        login();
+    }
+
+
+    private void login() {
         if (!RelayrSdk.isUserLoggedIn()) {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivityForResult(new Intent(this, LoginActivity.class), loginResultCode);
         }
-        setupSubscription();
-
+        else {
+            startActivity(new Intent(this, AlertsActivity.class));
+        }
     }
 
-    private void setupSubscription(){
-        mTemperatureDeviceSubscription = RelayrSdk.getRelayrApi()
-                .getUserInfo()
-                .flatMap(new Func1<User, Observable<List<Transmitter>>>() {
-                    @Override
-                    public Observable<List<Transmitter>> call(User user) {
-                        return RelayrSdk.getRelayrApi().getTransmitters(user.id);
-                    }
-                })
-                .flatMap(new Func1<List<Transmitter>, Observable<List<TransmitterDevice>>>() {
-                    @Override
-                    public Observable<List<TransmitterDevice>> call(List<Transmitter> transmitters) {
-                        // This is a naive implementation. Users may own multiple WunderBars or different
-                        // kinds of transmitters.
-                        if (transmitters.isEmpty())
-                            return Observable.from(new ArrayList<List<TransmitterDevice>>());
-                        return RelayrSdk.getRelayrApi().getTransmitterDevices(transmitters.get(0).id);
-                    }
-                })
-                .filter(new Func1<List<TransmitterDevice>, Boolean>() {
-                    @Override
-                    public Boolean call(List<TransmitterDevice> devices) {
-                        // Check whether there is a thermometer among the devices listed under the transmitter.
-                        for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                })
-                .flatMap(new Func1<List<TransmitterDevice>, Observable<TransmitterDevice>>() {
-                    @Override
-                    public Observable<TransmitterDevice> call(List<TransmitterDevice> devices) {
-                        for (TransmitterDevice device : devices) {
-                            if (device.model.equals(DeviceModel.TEMPERATURE_HUMIDITY.getId())) {
-                                return Observable.just(device);
-                            }
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<TransmitterDevice>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "PROBLEMZ",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(TransmitterDevice device) {
-                        subscribeForTemperatureUpdates(device);
-                    }
-                });
-    }
-
-    private void subscribeForTemperatureUpdates(TransmitterDevice device) {
-        mWebSocketSubscription = RelayrSdk.getWebSocketClient()
-                .subscribe(device, new Subscriber<Object>() {
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "A PROBLEM",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d(TAG, reading.temp + "˚C");
-                    }
-                });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == loginResultCode){
+            login();
+        }
     }
 
     @Override
