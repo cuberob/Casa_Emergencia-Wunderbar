@@ -216,7 +216,7 @@ public class SensorDataService extends IntentService {
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_stat_hotel)
                         .setContentTitle(getResources().getString(R.string.notification_title))
                         .setContentText("test");
 
