@@ -10,9 +10,6 @@ import com.rob.bryan.steven.hackathon2014.R;
 import io.relayr.LoginEventListener;
 import io.relayr.RelayrSdk;
 
-/**
- * Created by steven on 23/11/14.
- */
 public class LoginActivity extends BaseActivity implements LoginEventListener {
 
     @Override
@@ -20,9 +17,7 @@ public class LoginActivity extends BaseActivity implements LoginEventListener {
         super.onCreate(savedInstanceState);
         setActionBarIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 
-        if (!RelayrSdk.isUserLoggedIn()) {
-
-            //if the user isn't logged in, we call the logIn method
+        if (! RelayrSdk.isUserLoggedIn()) {
             RelayrSdk.logIn(this, this);
         }
     }
