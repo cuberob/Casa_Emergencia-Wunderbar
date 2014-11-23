@@ -37,6 +37,8 @@ public class AlertsActivity extends BaseActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private LinearLayout mEmptyList;
 
+    private ArrayList<Alert> alerts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +53,7 @@ public class AlertsActivity extends BaseActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        ArrayList<Alert> alerts = new ArrayList<Alert>();
+        alerts = new ArrayList<Alert>();
 
 //        alerts.add(new Alert("Light", Alert.AlertType.LIGHT, "Main light broken", 0));
 //        alerts.add(new Alert("Refrigerator", Alert.AlertType.TEMPERATURE, "Too cold", 0));
@@ -61,16 +63,17 @@ public class AlertsActivity extends BaseActivity {
 
         JSONArray alertsArray = AlarmManager.getAlertsJSONArray(getApplicationContext());
 
+        mAdapter = new AlertsAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+
         for (int i = 0; i < alertsArray.length(); i++) {
             try {
                 alerts.add(new Alert((JSONObject) alertsArray.get(i)));
+                mAdapter.notifyItemInserted(alerts.size());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
-        mAdapter = new AlertsAdapter(alerts);
-        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -79,8 +82,6 @@ public class AlertsActivity extends BaseActivity {
     }
 
     class AlertsAdapter extends RecyclerView.Adapter<AlertsAdapter.ViewHolder> {
-        private ArrayList<Alert> alerts;
-
         public class ViewHolder extends RecyclerView.ViewHolder {
             public CardView card;
 
@@ -88,10 +89,6 @@ public class AlertsActivity extends BaseActivity {
                 super(card);
                 this.card = card;
             }
-        }
-
-        public AlertsAdapter(ArrayList<Alert> alerts) {
-            this.alerts = alerts;
         }
 
         @Override
@@ -164,9 +161,51 @@ public class AlertsActivity extends BaseActivity {
         }
     }
 
-    public void onEvent(Alert isUpdate) {
-        updateList();
-        Log.d("AlertsActivity", "boolean: " + isUpdate.getDescription());
+    public void onEvent(Alert alert) {
+        Log.d("AlertsActivity", "boolean: " + alert.getDescription());
+
+        int existingPosition = -1;
+
+        for (int i = 0; i < mAdapter.getItemCount(); i++) {
+            if (alerts.get(i).getAlertType() == alert.getAlertType()) {
+                existingPosition = i;
+            }
+        }
+
+        if (existingPosition > -1) {
+            alerts.remove(existingPosition);
+            alerts.add(existingPosition, alert);
+            mAdapter.notifyItemChanged(existingPosition);
+            Log.d("Alerts", "Existed, replaced");
+        } else {
+            alerts.add(alert);
+            Log.d("Alerts", "New, added");
+
+            AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
+            fadeOut.setInterpolator(new AccelerateInterpolator());
+            fadeOut.setDuration(300);
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mEmptyList.setVisibility(View.INVISIBLE);
+                    int position = mAdapter.getItemCount();
+                    mAdapter.notifyItemInserted(position - 1);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyList.startAnimation(fadeOut);
+        }
     }
 
     @Override
@@ -181,9 +220,5 @@ public class AlertsActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
         Log.d("Alerts", "onPause");
         super.onPause();
-    }
-
-    private void updateList() {
-
     }
 }

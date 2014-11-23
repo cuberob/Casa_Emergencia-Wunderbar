@@ -193,8 +193,7 @@ public class SensorDataService extends IntentService {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
                         Log.d("SensorDataService", reading.temp + "˚C");
                         AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this);
-                        AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this);
-                        EventBus.getDefault().post(new Alert("temp", Alert.AlertType.TEMPERATURE, 0));
+//                        AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this);
                     }
                 });
     }
