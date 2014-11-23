@@ -12,4 +12,6 @@
     <string name="successfully_logged_out">You were successfully logged out!</string>
     <string name="unsuccessfully_logged_in">There was a problem in the log in.</string>
 
+    <string name="notification_title">Alerts</string>
+
 </resources>

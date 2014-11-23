@@ -1,8 +1,11 @@
 package com.rob.bryan.steven.hackathon2014.services;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.Context;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,6 +13,9 @@ import com.google.gson.Gson;
 import com.rob.bryan.steven.hackathon2014.R;
 import com.rob.bryan.steven.hackathon2014.object.Alert;
 import com.rob.bryan.steven.hackathon2014.utils.AlarmManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,10 +197,55 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        Log.d("SensorDataService", reading.temp + "˚C");
-                        AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this);
-//                        AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this);
+                        //Log.d("SensorDataService", reading.temp + "˚C");
+                        if (AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this)
+                                || AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this)
+                                || AlarmManager.checkLight(reading.light, SensorDataService.this)
+                                || AlarmManager.checkWindowOpen(reading.prox, SensorDataService.this)) {
+                            showNotification();
+                        }
                     }
                 });
+    }
+
+    private void showNotification() {
+
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle(getResources().getString(R.string.notification_title))
+                        .setContentText("test");
+
+        JSONArray jsonArray = AlarmManager.getAlertsJSONArray(SensorDataService.this);
+        ArrayList<Notification> pages = new ArrayList<Notification>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            /*Alert alert = new Alert((JSONObject)jsonArray.get(i));
+            NotificationCompat.BigTextStyle pageStyle = new NotificationCompat.BigTextStyle();
+            pageStyle.setBigContentTitle(alert.getAlertTypeString())
+                    .bigText(alert.getDescription())
+                    .build();
+
+            Notification notificationPage =
+                    new NotificationCompat.Builder(this)
+                            .setStyle(pageStyle)
+                            .build();
+            pages.add(notificationPage);*/
+        }
+
+        NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
+        wearableExtender.addPages(pages);
+
+
+        Notification notification = notificationBuilder.extend(wearableExtender)
+                .build();
+
+        int notificationId = 001;
+
+        // Get an instance of the NotificationManager service
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(this);
+
+        // Build the notification and issues it with notification manager.
+        notificationManager.notify(notificationId, notification);
     }
 }
