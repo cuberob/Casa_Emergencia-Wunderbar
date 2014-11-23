@@ -11,8 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,7 +77,7 @@ public class AlarmManager {
 
     public static boolean checkWindowOpen(float distance, Context context){
         Alert alert;
-        if(distance > 95){
+        if(distance < 95){
             alert = new Alert("Window", Alert.AlertType.PROXIMITY, "The windows is still open", Alert.HIGH_PRIORITY);
         }else{
             return false;
@@ -126,7 +128,7 @@ public class AlarmManager {
         //Loop through alerts to see if a alertType alert already exists.
         for(int i = 0; i < mAlertsJSONArray.length(); i++){
             try {
-                mJSONObject = (JSONObject) mAlertsJSONArray.get(i);
+                mJSONObject = mAlertsJSONArray.getJSONObject(i);
                 Alert mTempAlert = new Alert(mJSONObject);
                 if(mTempAlert.getAlertType() == alertType){
                     //Temperature alert already exists, delete so we can re-add later
@@ -201,6 +203,19 @@ public class AlarmManager {
         }
 
         return false;
+    }
+
+    public ArrayList<Alert> getAlertsList(Context context){
+        ArrayList<Alert> result = new ArrayList<Alert>();
+        JSONArray mArray = getAlertsJSONArray(context);
+        for(int i = 0; i < mArray.length(); i++){
+            try {
+                result.add(new Alert(mArray.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
 }

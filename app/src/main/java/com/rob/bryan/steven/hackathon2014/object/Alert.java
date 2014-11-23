@@ -167,4 +167,16 @@ public class Alert {
         return result;
     }
 
+    public int getPriorityColor(){
+        switch(priority){
+            case(LOW_PRIORITY):
+                return R.color.yellow_400;
+            case(MEDIUM_PRIORITY):
+                return R.color.orange_400;
+            case(HIGH_PRIORITY):
+                return R.color.red_400;
+        }
+        return R.color.red_400;
+    }
+
 }
