@@ -197,7 +197,6 @@ public class SensorDataService extends IntentService {
                     @Override
                     public void onNext(Object o) {
                         Reading reading = new Gson().fromJson(o.toString(), Reading.class);
-                        //Log.d("SensorDataService", reading.temp + "˚C");
                         if (AlarmManager.checkFridgeTemperature(reading.temp, SensorDataService.this)
                                 || AlarmManager.checkNoiseLevel(reading.snd_level, SensorDataService.this)
                                 || AlarmManager.checkLight(reading.light, SensorDataService.this)
