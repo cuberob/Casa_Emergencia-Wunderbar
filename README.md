@@ -14,5 +14,6 @@ Todo:
 Howto:
 - Import into Android studio and run!
 
+![alt tag](https://lh6.googleusercontent.com/-S6rsavXohGM/VIdOKTHBc4I/AAAAAAAADBg/dmoYctwecFo/w894-h1588-no/2014-12-09.jpg)
 
 Build during the Droidcon NL 2014 Hackathon
